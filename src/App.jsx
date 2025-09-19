@@ -1,14 +1,23 @@
-import { useState } from 'react'
-import './App.css'
-
+import Head from "./components/Head";
+import Body from "./components/Body";
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
-      <h1 className='bg-red-200'>hello world!</h1>
+      <Head />
+      <Body />
     </>
-  )
+  );
 }
 
-export default App
+export default App;
+
+/**
+ * head
+ * body
+ *   sidebar
+ *      menuitems
+ *   maincontainer
+ *      buttonslist
+ *      videocard
+ *
+ */

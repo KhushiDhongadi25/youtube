@@ -38,7 +38,7 @@ const ButtonList = () => {
   };
 
   return (
-    <div className="relative flex items-center w-screen bg-white">
+    <div className="flex relative items-center w-screen bg-white">
       {/* Left Arrow */}
       <button
         onClick={() => scroll("left")}

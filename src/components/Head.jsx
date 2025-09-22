@@ -5,6 +5,8 @@ import { YOUTUBE_SUGGEST_API, YOUTUBE_VIDEO_API } from "../utils/constants";
 
 const Head = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     // API call
@@ -41,7 +43,8 @@ const Head = () => {
   const getSearchSuggestions = async () => {
     const data = await fetch(YOUTUBE_SUGGEST_API + searchQuery);
     const json = await data.json();
-    console.log(json[1]);
+    // console.log(json[1]);
+    setSuggestions(json[1]);
   };
 
   const dispatch = useDispatch();
@@ -65,21 +68,36 @@ const Head = () => {
           />
         </a>
       </div>
-      <div className="h-9 col-span-10 flex justify-center">
-        <input
-          id="search"
-          className="w-1/2 border border-gray-400 p-2 rounded-l-full"
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        <button className="border border-gray-400 p-2 rounded-r-full">
-          <img
-            className="h-5 pb-1"
-            alt="search-logo"
-            src=" https://cdn-icons-png.flaticon.com/512/622/622669.png"
+      <div className="h-9 col-span-10">
+        <div>
+          <input
+            id="search"
+            className="w-1/2 border border-gray-400 p-2 rounded-l-full"
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setShowSuggestions(false)}
           />
-        </button>
+          <button className="border border-gray-400 p-2 rounded-r-full">
+            <img
+              className="h-5 pb-1"
+              alt="search-logo"
+              src=" https://cdn-icons-png.flaticon.com/512/622/622669.png"
+            />
+          </button>
+        </div>
+        {showSuggestions && (
+          <div className="fixed bg-white py-2 px-2 w-[27rem] shadow-lg rounded-lg border border-gray-400">
+            <ul>
+              {suggestions.map((s) => (
+                <li key={s} className="py-2 px-3 shadow-sm hover:bg-gray-100">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
       <div className="col-span-1 flex justify-around">
         <img

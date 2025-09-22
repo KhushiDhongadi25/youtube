@@ -1,8 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toggleMenu } from "../utils/appSlice";
 import { useDispatch } from "react-redux";
+import { YOUTUBE_SUGGEST_API, YOUTUBE_VIDEO_API } from "../utils/constants";
 
 const Head = () => {
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    // API call
+
+    const timer = setTimeout(() => {
+      console.log("API Call for ", searchQuery);
+      getSearchSuggestions();
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+    };
+    // make an api call after every key press
+    // but if the difference between 2 api calls is <200ms
+    // decline the api call of suggestions
+  }, [searchQuery]);
+
+  /**
+   *
+   * key - i
+   * render the component
+   * useEffect();
+   * start timer => make api call after 200ms
+   *
+   * key - ip
+   * re render the component
+   * useEffect();
+   * start new timer again => make api call after 200ms
+   *
+   * setTimeout() => <200ms -> clearTimeout() => api call cancelled
+   * setTimeout() => >200ms => api call made
+   */
+
+  const getSearchSuggestions = async () => {
+    const data = await fetch(YOUTUBE_SUGGEST_API + searchQuery);
+    const json = await data.json();
+    console.log(json[1]);
+  };
+
   const dispatch = useDispatch();
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
@@ -26,8 +67,11 @@ const Head = () => {
       </div>
       <div className="h-9 col-span-10 flex justify-center">
         <input
+          id="search"
           className="w-1/2 border border-gray-400 p-2 rounded-l-full"
           type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button className="border border-gray-400 p-2 rounded-r-full">
           <img
@@ -59,3 +103,31 @@ const Head = () => {
 };
 
 export default Head;
+
+// debouncing
+
+// typing slow = diff between strokes is high= 200ms
+// typing fast = diff between strokes is low= 30ms
+
+// debouncing with 200ms
+//  -if diff between 2 key strokes is <200ms, DECLINE API CALL
+//  -if diff between 2 key strokes is >200ms, MAKE API CALL
+
+// in console: fetch("http://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=iphone")
+// and get the data from network tab in response (search suggestions for iphone)
+
+// makes an api call for each and every stroke of key which is bad for performance in search bar.
+// debouncing is used to avoid this issue
+// debouncing: making an api call after user has stopped typing for a specific time period.
+// useEffect(() => {
+//   const timer = setTimeout(() => {
+//     console.log("api call for ", search);
+//   }, 500);
+//   return () => {
+//     clearTimeout(timer);
+//   };
+// }, [search]);
+// useSelector: used to read the value from the store
+// useDispatch: used to dispatch the action to the store
+// useSelector and useDispatch are hooks provided by react-redux to interact with the redux store in functional components.
+//
